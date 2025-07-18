@@ -3,6 +3,8 @@ from django.http import Http404
 from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
 from todo.models import Task
+from datetime import datetime
+from django.utils import timezone
 from django.shortcuts import render
 from .models import Task
 
@@ -10,7 +12,12 @@ from .models import Task
 # Create your views here.
 def index(request):
     if request.method == 'POST':
-        task = Task(title=request.POST['title'], due_at=make_aware(parse_datetime(request.POST['due_at'])))
+        note = request.POST.get('note', '')
+        task = Task(
+            title=request.POST['title'],
+            due_at=make_aware(parse_datetime(request.POST['due_at'])),
+            note=note
+        )
         task.save()
 
     if request.GET.get('order') == 'due':
