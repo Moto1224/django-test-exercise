@@ -5,6 +5,8 @@ from django.utils.dateparse import parse_datetime
 from todo.models import Task
 from datetime import datetime
 from django.utils import timezone
+from django.shortcuts import render
+from .models import Task
 
 
 # Create your views here.
@@ -73,4 +75,25 @@ def close(request, task_id):
     task.save()
     return redirect(index)
 
+def index(request):
+    if request.method == 'POST':
+        task = Task(
+            title=request.POST['title'],
+            due_at=make_aware(parse_datetime(request.POST['due_at']))
+        )
+        task.save()
 
+    query = request.GET.get('q', '')
+    order = request.GET.get('order', 'due')
+
+    if query:
+        tasks = Task.objects.filter(title__icontains=query)
+    else:
+        tasks = Task.objects.all()
+
+    if order == 'post':
+        tasks = tasks.order_by('-posted_at')
+    else:
+        tasks = tasks.order_by('due_at')
+
+    return render(request, 'todo/index.html', {'tasks': tasks, 'query': query, 'order': order})

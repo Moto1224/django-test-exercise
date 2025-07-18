@@ -6,6 +6,7 @@
     <title>To Do Application</title>
     <meta charset="UTF-8">
     <meta name="author" content="INIAD">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
   </head>
 
   <body>
@@ -15,7 +16,7 @@
       {% csrf_token %}
       <div>
         <label for="titleInput">Title</label><br>
-        <input id="titleInput" name="title" type="text" placeholder="Input title">
+        <input id="titleInput" name="title" type="text" placeholder="Input title" required>
       </div>
       <div>
         <label for="dueInput">Due at:</label><br>
@@ -35,6 +36,13 @@
       <a href="{% url 'index' %}?order=due">Sort by Due Date</a> |
       <a href="{% url 'index' %}?order=post">Sort by Posted Date</a>
     </div>
+
+    <form method="get" action="{% url 'index' %}">
+      <input type="text" name="q" placeholder="タイトルで検索" value="{{ query }}">
+      <input type="hidden" name="order" value="{{ order }}">
+      <button type="submit">検索</button>
+    </form>
+  
 
     {% for task in tasks %}
     <div class="text">
